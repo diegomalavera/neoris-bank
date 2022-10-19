@@ -1,22 +1,26 @@
 version: '2'
 
 services:
-  app:
-    image: 'docker-spring-boot-postgres:latest'
+  neoris-bank:
+    image: 'neoris-bank:latest'
     build:
       context: .
-    container_name: app
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
     depends_on:
-      - db
+      - neoris-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://neoris-db:5432/compose-postgres
       - SPRING_DATASOURCE_USERNAME=compose-postgres
       - SPRING_DATASOURCE_PASSWORD=compose-postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-  db:
+  neoris-db:
     image: 'postgres:13.1-alpine'
-    container_name: db
+    container_name: neoris-db
     environment:
       - POSTGRES_USER=compose-postgres
       - POSTGRES_PASSWORD=compose-postgres
+    volumes:
+      - ./BaseDatos.sql:/docker-entrypoint-initdb.d/neoris-bank.sql
